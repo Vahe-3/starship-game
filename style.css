@@ -1,0 +1,19 @@
+body{
+    background-image:url("./data/elitefon.ru_26439.jpg");
+}
+
+
+
+.div{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height:1000px;
+}
+
+#canvas{
+    
+    
+    border:2px solid black;
+    
+}
