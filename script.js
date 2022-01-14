@@ -5,22 +5,45 @@ const backgroundImg = document.createElement("img");
 backgroundImg.src = "./data/2513478.jpg";
 
 
-function intersect(rect1, rect2) { 
-    
+function intersect(rect1, rect2) {
+
     const x = Math.max(rect1.x, rect2.x),
-      num1 = Math.min(rect1.x + rect1.width, rect2.x + rect2.width),
-      y = Math.max(rect1.y, rect2.y),
-      num2 = Math.min(rect1.y + rect1.height, rect2.y + rect2.height);
+        num1 = Math.min(rect1.x + rect1.width, rect2.x + rect2.width),
+        y = Math.max(rect1.y, rect2.y),
+        num2 = Math.min(rect1.y + rect1.height, rect2.y + rect2.height);
     return (num1 >= x && num2 >= y);
-  };
+};
+
+function drawScore(){
+    ctx.font = "20px Comic Sans MS";
+    ctx.fillStyle = "White";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("Score: " + score,10,10);
+};
+
+function gameOverFunc(){
+    
+    ctx.font = "60px Comic Sans MS";
+    ctx.fillStyle = "White";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Game Over!",canvas.width/2,canvas.height/2);
+};
+
+let score = 0;
+let gameOver = false;
 
 
-class Game{
-    constructor(x,y,w,h){
+
+class Game {
+    constructor(x, y, w, h) {
         this._x = x;
         this._y = y;
         this._w = w;
         this._h = h;
+
+        
 
         this._speed = 1;
         this._xDelta = 0;
@@ -29,162 +52,210 @@ class Game{
         this._Img = document.createElement("img");
         this._Img.src = "";
 
+        
+
     };
 
-    update(){
+    update() {
         this._x += this._xDelta;
         this._y += this._yDelta;
     };
 
-    
-    draw(){
-        ctx.drawImage(this._Img,this._x,this._y,this._w,this._h);
+
+    draw() {
+        ctx.drawImage(this._Img, this._x, this._y, this._w, this._h);
     };
 
-    goRight(){
+    
+
+    
+
+    goRight() {
         this._xDelta = this._speed;
     };
 
-    goLeft(){
+    goLeft() {
         this._xDelta = this._speed * -1;
     };
 
-    goTop(){
+    goTop() {
         this._yDelta = this._speed * -1;
     };
 
-    goBottom(){
+    goBottom() {
         this._yDelta = this._speed;
     }
 
-    stop(){
+    stop() {
         this._xDelta = 0;
     };
 
-    getBoundingBox(){
+    getBoundingBox() {
         return {
-            x:this._x,
-            y:this._y,
-            width:this._w,
-            height:this._h,
+            x: this._x,
+            y: this._y,
+            width: this._w,
+            height: this._h,
         }
     };
+
+    
 
 }
 
-class Starship extends Game{
 
-    constructor(x,y,w,h){
-        super(x,y,w,h)
+
+class Starship extends Game {
+
+    constructor(x, y, w, h) {
+        super(x, y, w, h)
+
+        this._speed = 7;
         
+
+
         this._Img = document.createElement("img");
         this._Img.src = "./data/starship.png";
 
-        this._starAudio  = document.createElement("audio");
+        this._starAudio = document.createElement("audio");
         this._starAudio.src = ""
+
+    };
+
+
+
+    goRight() {
+
         
-        };
+        
+        super.goRight();
+        
 
-        goRight(){
-            super.goRight();
-            this._Img = document.createElement("img");
-            this._Img.src = "./data/starshipRight.png";
+        this._Img.src = "./data/starshipRight.png";
 
-        };
+        
 
-        goLeft(){
-            super.goLeft();
-            
-            this._Img.src = "./data/starshipLeft.png";
+        
+
+    };
+
+    goLeft() {
+        
+        super.goLeft();
+
+        this._Img.src = "./data/starshipLeft.png";
+
+        
+    }
+
+    stop() {
+        super.stop();
+
+
+        this._Img.src = "./data/starship.png";
+
+    }
+
+    fire() {
+        const x = this._x + 57;
+        const y = this._y;
+
+        const lasers = data.gameObjects.filter(obj => obj instanceof Laser);
+
+        if (lasers.length === 0) {
+
+            let laser = new Laser(x, y, 5, 15);
+
+            laser.goTop()
+            data.gameObjects.push(laser);
+
         }
 
-        stop(){
-            super.stop();
-            
-            this._Img.src = "./data/starship.png";
 
+
+
+    };
+
+    update(){
+        super.update();
+
+        if(this._x > canvas.width ){
+            this._x = -100;
+        } else if(this._x < -100){
+            this._x = canvas.width 
         }
 
-        fire(){
-            const x = this._x + 57;
-            const y = this._y ;
-
-            const lasers = data.gameObjects.filter(obj => obj instanceof Laser);
-
-            if(lasers.length === 0){
-
-                let laser = new Laser(x,y,5,15);
-            
-                laser.goTop()
-                data.gameObjects.push(laser);
-
-            }
-
-            
-            
-            
-        };
         
-        
+    }
+
+    
+
+
 
 };
 
-class Ufo extends Game{
-    constructor(x,y,w,h){
-        super(x,y,w,h);
-        
+class Ufo extends Game {
+    constructor(x, y, w, h) {
+        super(x, y, w, h);
+
         this.delete = false;
+        this._speed = score / 5  + 1 ;
 
         this._Img = document.createElement("img");
         this._Img.src = "./data/ufo.png";
-    };  
+    };
 
-        
-        
-    die(){
+
+
+    die() {
 
         this.delete = true;
+        score = score  +1;
 
-        const explosion = new Explosion(this._x-20,this._y,120,100)
-            explosion.clear();
+        const explosion = new Explosion(this._x - 20, this._y, 120, 100)
+        explosion.clear();
 
-            data.gameObjects.push(explosion);
+        data.gameObjects.push(explosion);
 
-       
+
 
     };
 
 
-    update(){
+    update() {
         super.update()
-        
-        if((this._yDelta > 0 && this._y + this._w > canvas.height)||(this._yDelta > 0 && this._y > canvas.height)){
-        
-            this.die();
 
+        if ((this._yDelta > 0 && this._y + this._w > canvas.height) || (this._yDelta > 0 && this._y > canvas.height)) {
+
+            this.die();
             
-        }; 
+            gameOver = true;
+            
+
+
+        };
+
         
     };
 
 };
 
-class Explosion extends Game{
-    constructor(x,y,w,h){
-        super(x,y,w,h);
-        
+class Explosion extends Game {
+    constructor(x, y, w, h) {
+        super(x, y, w, h);
+
         this.delete = false;
 
         this._Img = document.createElement("img");
         this._Img.src = "./data/explosion.png";
     };
-    
-    clear(){
-        setTimeout(()=>{
+
+    clear() {
+        setTimeout(() => {
             this.delete = true;
-        },2000)
+        }, 500)
     }
-    
+
 
 
 
@@ -192,116 +263,131 @@ class Explosion extends Game{
 }
 
 
-class Laser  extends Game{
-    constructor(x,y,w,h){
-        super(x,y,w,h)
-        
+class Laser extends Game {
+    constructor(x, y, w, h) {
+        super(x, y, w, h)
+
         this.delete = false;
         this._speed = 10;
-        
+
         this._stabAudio = document.createElement("audio");
         this._stabAudio.src = "https://soundbible.com//mp3/Stab-SoundBible.com-766875573.mp3";
     };
 
-    draw(){
+    draw() {
         super.draw();
         ctx.fillStyle = "red"
-        ctx.fillRect(this._x,this._y,this._w,this._h);
+        ctx.fillRect(this._x, this._y, this._w, this._h);
     }
-        
-    update(){
-           super.update();
 
-            if(this._y < 0){
-                this.delete = true;
-            };
+    update() {
+        super.update();
 
-            let ufos = data.gameObjects.filter(ufo => ufo instanceof Ufo)
-
-            ufos.forEach((ufo) => {
-                if (intersect(this.getBoundingBox(), ufo.getBoundingBox())) {
-                    
-                  ufo.die();
-                  
-                  
-                  this.delete = true;
-                }
-              });
-            
-
-            
-        };
-
-        clear(){
+        if (this._y < 0) {
             this.delete = true;
         };
-        
-    };    
+
+        let ufos = data.gameObjects.filter(ufo => ufo instanceof Ufo)
+
+        ufos.forEach((ufo) => {
+            if (intersect(this.getBoundingBox(), ufo.getBoundingBox())) {
+
+                ufo.die();
 
 
-const data ={gameObjects:[new Starship(100,520,120,100)]} 
+                this.delete = true;
+            }
+        });
 
 
 
+    };
 
-function draw(){
-    ctx.drawImage(backgroundImg,0,0,canvas.width,canvas.height);
-    data.gameObjects.forEach(obj => obj.draw())
-    
+    clear() {
+        this.delete = true;
+    };
+
 };
 
-function update(){
+
+const data = { gameObjects: [new Starship(100, 520, 120, 100)] }
+
+
+
+
+function draw() {
+    ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+
+
+    
+    drawScore() 
+    
+    data.gameObjects.forEach(obj => obj.draw())
+
+};
+
+function update() {
     data.gameObjects.forEach(obj => obj.update());
     data.gameObjects = data.gameObjects.filter((obj) => obj.delete !== true);
 
     const ufos = data.gameObjects.filter(obj => obj instanceof Ufo);
 
-    if(ufos.length === 0){
+    if (ufos.length === 0) {
 
-        const x = Math.floor((Math.random() * 10) *100);
-        
-        const ufo = new Ufo(x,100,100,50)
-        console.log(x)
+        let x = Math.floor(Math.random() * 1000 - 100);
+
+        if(x < 0){
+            x = Math.floor(Math.random() * 1000 - 100);
+        }
+
+        const ufo = new Ufo(x, -50 , 100, 50)
+
 
         ufo.goBottom();
 
         data.gameObjects.push(ufo)
-        
+
     }
+
+
+    
 
 }
 
-function loop(){
-    requestAnimationFrame(loop);
+function loop() {
+    requestAnimationFrame(gameOver ? gameOverFunc : loop);
     update();
     draw();
 };
 
 loop();
 
-document.addEventListener("keydown",function(evt){
+document.addEventListener("keydown", function (evt) {
     let starship = data.gameObjects.find(obj => obj instanceof Starship)
-    if(evt.code === "ArrowRight"){
+    if (evt.code === "ArrowRight") {
         starship.goRight();
-    } else if(evt.code === "ArrowLeft"){
+
+        
+
+    } else if (evt.code === "ArrowLeft") {
         starship.goLeft();
     } else {
         starship.fire()
     }
-    
+
 });
 
-document.addEventListener("keyup",function(evt){
-let starship = data.gameObjects.find(obj => obj instanceof Starship)
-   starship.stop();
-});    
+document.addEventListener("keyup", function (evt) {
+    let starship = data.gameObjects.find(obj => obj instanceof Starship);
+    if(evt.code === "ArrowRight" || evt.code === "ArrowLeft" )
+    starship.stop();
+
+
+});
 
 window.states = data;
 
 
 
 
-    
 
-  
-    
