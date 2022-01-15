@@ -4,8 +4,10 @@ const ctx = canvas.getContext("2d");
 const backgroundImg = document.createElement("img");
 backgroundImg.src = "./data/2513478.jpg";
 
+let score = 0;
+let gameOver = false;
 
-function intersect(rect1, rect2) {
+const  intersect = (rect1, rect2) => {
 
     const x = Math.max(rect1.x, rect2.x),
         num1 = Math.min(rect1.x + rect1.width, rect2.x + rect2.width),
@@ -14,7 +16,7 @@ function intersect(rect1, rect2) {
     return (num1 >= x && num2 >= y);
 };
 
-function drawScore(){
+const  drawScore = () => {
     ctx.font = "20px Comic Sans MS";
     ctx.fillStyle = "White";
     ctx.textAlign = "left";
@@ -22,17 +24,16 @@ function drawScore(){
     ctx.fillText("Score: " + score,10,10);
 };
 
-function gameOverFunc(){
+const  gameOverFunc = () =>{
     
     ctx.font = "60px Comic Sans MS";
-    ctx.fillStyle = "White";
+    ctx.fillStyle = "Red";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("Game Over!",canvas.width/2,canvas.height/2);
 };
 
-let score = 0;
-let gameOver = false;
+
 
 
 
@@ -336,7 +337,7 @@ function update() {
 
         let x = Math.floor(Math.random() * 1000 - 100);
 
-        if(x < 0){
+        if(x < 0 || x > canvas.width){
             x = Math.floor(Math.random() * 1000 - 100);
         }
 
