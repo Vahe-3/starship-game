@@ -129,10 +129,12 @@ class Starship extends Game {
 
         
         
-        super.goRight();
+        
         
 
         this._Img.src = "./data/starshipRight.png";
+
+        super.goRight();
 
         
 
@@ -142,11 +144,12 @@ class Starship extends Game {
 
     goLeft() {
         
-        super.goLeft();
+        
 
         this._Img.src = "./data/starshipLeft.png";
 
-        
+        super.goLeft();
+
     }
 
     stop() {
@@ -158,6 +161,7 @@ class Starship extends Game {
     }
 
     fire() {
+        
         const x = this._x + 57;
         const y = this._y;
 
