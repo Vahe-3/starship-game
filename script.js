@@ -113,52 +113,37 @@ class Starship extends Game {
 
         this._speed = 7;
         
-
-
-        this._Img = document.createElement("img");
         this._Img.src = "./data/starship.png";
-
-        this._starAudio = document.createElement("audio");
-        this._starAudio.src = ""
 
     };
 
 
-
     goRight() {
-
-        
-        
-        
-        
 
         this._Img.src = "./data/starshipRight.png";
 
         super.goRight();
 
-        
+    };  
 
-        
-
-    };
 
     goLeft() {
         
-        
-
         this._Img.src = "./data/starshipLeft.png";
 
         super.goLeft();
 
-    }
+    };          
 
     stop() {
-        super.stop();
 
+        super.stop();
 
         this._Img.src = "./data/starship.png";
 
-    }
+
+    };
+
 
     fire() {
         
@@ -176,11 +161,9 @@ class Starship extends Game {
 
         }
 
-
-
-
-    };
-
+    };      
+        
+        
     update(){
         super.update();
 
@@ -193,20 +176,34 @@ class Starship extends Game {
         
     }
 
+};      
+
+
+
+
+
+
+
+
+
+
+
+
     
 
 
 
-};
+
 
 class Ufo extends Game {
+
     constructor(x, y, w, h) {
         super(x, y, w, h);
 
         this.delete = false;
         this._speed = score / 5  + 1 ;
 
-        this._Img = document.createElement("img");
+
         this._Img.src = "./data/ufo.png";
     };
 
@@ -260,10 +257,6 @@ class Explosion extends Game {
             this.delete = true;
         }, 500)
     }
-
-
-
-
 
 }
 
@@ -323,13 +316,13 @@ const data = { gameObjects: [new Starship(100, 520, 120, 100)] }
 function draw() {
     ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
 
-
-    
     drawScore() 
     
     data.gameObjects.forEach(obj => obj.draw())
 
 };
+    
+
 
 function update() {
     data.gameObjects.forEach(obj => obj.update());
